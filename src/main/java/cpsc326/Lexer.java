@@ -129,7 +129,12 @@ class Lexer {
     }
 
     private void identifier() {
-        // TODO: implement identifier()
+        // consume letters, digits, and underscores
+        while (isAlphaNumeric(peek())) advance();
+
+        String text = source.substring(start, current);
+        TokenType type = keywords.getOrDefault(text, IDENTIFIER);
+        addToken(type);
     }
 
     private void scanToken() {
