@@ -1,11 +1,11 @@
 package cpsc326;
 
+import static cpsc326.TokenType.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static cpsc326.TokenType.*;
 
 class Lexer {
     private final String source;
@@ -22,8 +22,20 @@ class Lexer {
     static {
         keywords = new HashMap<>();
         keywords.put("and", AND);
-        // TODO: add keywrods 
-        
+        keywords.put("or", OR);
+        keywords.put("struct", STRUCT);
+        keywords.put("else", ELSE);
+        keywords.put("false", FALSE);
+        keywords.put("true", TRUE);
+        keywords.put("for", FOR);
+        keywords.put("fun", FUN);
+        keywords.put("if", IF);
+        keywords.put("nil", NIL);
+        keywords.put("print", PRINT);
+        keywords.put("return", RETURN);
+        keywords.put("this", THIS);
+        keywords.put("while", WHILE);
+        keywords.put("var", VAR);
     }
 
     List<Token> scanTokens() {
@@ -83,7 +95,23 @@ class Lexer {
     }
 
     private void string() {
-        // TODO: implement string()
+        // consume characters until end of string or end of file
+        while (!isAtEnd() && peek() != '"') {
+            if (peek() == '\n') line++;
+            advance();
+        }
+
+        if (isAtEnd()) {
+            System.err.println("Error at line " + line + ": Unterminated string.");
+            return;
+        }
+
+        // consume the closing "
+        advance();
+
+        // we want the string value without the surrounding quotes
+        String value = source.substring(start + 1, current - 1);
+        addToken(STRING, value);
     }
 
     private void number() {
