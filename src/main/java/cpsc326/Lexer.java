@@ -115,7 +115,17 @@ class Lexer {
     }
 
     private void number() {
-        // TODO: implement number()
+        // consume integers
+        while (isDigit(peek())) advance();
+
+        // only consume '.' if a digit follows
+        if (peek() == '.' && isDigit(peekNext())) {
+            advance();
+            while (isDigit(peek())) advance();
+        }
+
+        String text = source.substring(start, current);
+        addToken(NUMBER, Double.parseDouble(text));
     }
 
     private void identifier() {
