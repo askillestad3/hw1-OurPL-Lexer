@@ -102,7 +102,7 @@ class Lexer {
         }
 
         if (isAtEnd()) {
-            System.err.println("Error at line " + line + ": Unterminated string.");
+            OurPL.error(line, "Unterminated string.");
             return;
         }
 
@@ -186,7 +186,7 @@ class Lexer {
                 } else if (isAlpha(c)) {
                     identifier();
                 } else {
-                    System.err.println("Error at line " + line + ": Unexpected character '" + c + "'.");
+                    OurPL.error(line, "Unexpected character.");
                 }
                 break;
         }
