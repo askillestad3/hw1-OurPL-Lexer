@@ -138,6 +138,57 @@ class Lexer {
     }
 
     private void scanToken() {
-        // TODO: implement scanToken()
+        char c = advance();
+
+        switch (c) {
+            // single-character tokens
+            case '(': addToken(LEFT_PAREN); break;
+            case ')': addToken(RIGHT_PAREN); break;
+            case '{': addToken(LEFT_BRACE); break;
+            case '}': addToken(RIGHT_BRACE); break;
+            case ',': addToken(COMMA); break;
+            case '.': addToken(DOT); break;
+            case '+': addToken(PLUS); break;
+            case '-': addToken(MINUS); break;
+            case '*': addToken(STAR); break;
+            case '/': addToken(SLASH); break;
+            case ';': addToken(SEMICOLON); break;
+
+            // one or two character tokens
+            case '!': addToken(match('=') ? BANG_EQUAL : BANG); break;
+            case '=': addToken(match('=') ? EQUAL_EQUAL : EQUAL); break;
+            case '<': addToken(match('=') ? LESS_EQUAL : LESS); break;
+            case '>': addToken(match('=') ? GREATER_EQUAL : GREATER); break;
+
+            // handle comments
+            case '#':
+                while (!isAtEnd() && peek() != '\n') advance();
+                break;
+            
+            // handle whitespace
+            case ' ':
+            case '\r':
+            case '\t':
+                break;
+
+            case '\n':
+                line++;
+                break;
+            
+            // string literals
+            case '"':
+                string();
+                break;
+
+            default:
+                if (isDigit(c)) {
+                    number();
+                } else if (isAlpha(c)) {
+                    identifier();
+                } else {
+                    System.err.println("Error at line " + line + ": Unexpected character '" + c + "'.");
+                }
+                break;
+        }
     }
 }
