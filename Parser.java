@@ -22,11 +22,19 @@ class Parser {
     }
 
     private Expr expression() {
-        // TODO complete function
+        return equality();
     }
 
     private Expr equality() {
-        // TODO complete function
+        Expr expr = comparison();
+
+        while (match(BANG_EQUAL, EQUAL_EQUAL)) {
+            Token operator = previous();
+            Expr right = comparison();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+
+        return expr;
     }
 
     private Expr comparison() {
