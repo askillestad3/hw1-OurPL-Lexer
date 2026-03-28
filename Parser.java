@@ -74,7 +74,13 @@ class Parser {
     }
 
     private Expr unary() {
-        // TODO complete function
+        if (match(BANG, MINUS)) {
+            Token operator = previous();
+            Expr right = unary();
+            return new Expr.Unary(operator, right);
+        }
+
+        return primary();
     }
 
     private Expr primary() {
