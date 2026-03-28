@@ -38,15 +38,39 @@ class Parser {
     }
 
     private Expr comparison() {
-        // TODO complete function
+        Expr expr = term();
+
+        while (match(GREATER, GREATER_EQUAL, LESS, LESS_EQUAL)) {
+            Token operator = previous();
+            Expr right = term();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+
+        return expr;
     }
 
     private Expr term() {
-        // TODO complete function
+        Expr expr = factor();
+
+        while (match(PLUS, MINUS)) {
+            Token operator = previous();
+            Expr right = factor();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+
+        return expr;
     }
 
     private Expr factor() {
-        // TODO complete function
+        Expr expr = unary();
+
+        while (match(STAR, SLASH)) {
+            Token operator = previous();
+            Expr right = unary();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+
+        return expr;
     }
 
     private Expr unary() {
