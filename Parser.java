@@ -1,7 +1,8 @@
 package cpsc326;
 
-import java.util.List;
 import static cpsc326.TokenType.*;
+
+import java.util.List;
 
 class Parser {
     private static class ParseError extends RuntimeException{ }
