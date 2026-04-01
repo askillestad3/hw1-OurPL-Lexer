@@ -1,7 +1,5 @@
 package cpsc326;
 
-import java.util.List;
-
 abstract class Expr {
   interface Visitor<R> {
     R visitBinaryExpr(Binary expr);
@@ -29,7 +27,7 @@ abstract class Expr {
   }
 
   static class Binary extends Expr {
-    Binary(Expr Left, Token Operator, Expr Right) {
+    Binary(Expr left, Token operator, Expr right) {
       this.left = left;
       this.operator = operator;
       this.right = right;
