@@ -55,7 +55,6 @@ public class OurPL {
 
         if (hadError) return;
 
-        System.out.println(new ASTPrinter().print(expression));
         new Interpreter().interpret(expression);
     }
 
