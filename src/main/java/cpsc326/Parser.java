@@ -2,6 +2,7 @@ package cpsc326;
 
 import static cpsc326.TokenType.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class Parser {
@@ -14,12 +15,43 @@ class Parser {
         this.tokens = tokens;
     }
 
-    Expr parse() {
+    List <Stmt> parse() {
         try {
-            return expression();
+            List <Stmt> statements = new ArrayList<Stmt>();
+            while (!isAtEnd()) {
+                statements.add(Statement());
+            }
+            consume(EOF, "Expect end of file.");
+            return statements;
         } catch (ParseError error) {
             return null;
         }
+    }
+
+    Stmt Statement() {
+        if (match(PRINT)) {
+            return PrintStatement();
+        } else {
+            return ExpressionStatement();
+        }
+    }
+
+    Stmt PrintStatement() {
+        Expr expr = expression();
+        if (match(SEMICOLON)) {
+            return new Stmt.Print(expr);
+        }
+        error(peek(), "Expected expression");
+        return null;
+    }
+
+    Stmt ExpressionStatement() {
+        Expr expr = expression();
+        if (match(SEMICOLON)) {
+            return new Stmt.Expression(expr);
+        }
+        error(peek(), "Expected expression");
+        return null;
     }
 
     private Expr expression() {
