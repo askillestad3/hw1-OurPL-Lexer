@@ -1,12 +1,33 @@
 package cpsc326;
 
-class Interpreter implements Expr.Visitor<Object>{
-    void interpret(Expr expression) {
+import java.util.List;
+
+class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
+    Environment environment = new Environment();
+    
+    void interpret(List<Stmt> statements) {
         try {
-            Object value = evaluate(expression);
-            System.out.println(stringify(value));
+            for (Stmt statement : statements) {
+                execute(statement);
+            }
         } catch (RuntimeError error) {
             OurPL.runtimeError(error);
+        }
+    }
+
+    private void execute(Stmt stmt) {
+        stmt.accept(this);
+    }
+
+    void executeBlock(List<Stmt> statements, Environment environment) {
+        Environment previous = this.environment;
+        try {
+            this.environment = environment;
+            for (Stmt statement : statements) {
+                execute(statement);
+            }
+        } finally {
+            this.environment = previous;
         }
     }
 
