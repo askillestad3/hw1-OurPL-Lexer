@@ -16,16 +16,12 @@ class Parser {
     }
 
     List <Stmt> parse() {
-        try {
-            List <Stmt> statements = new ArrayList<Stmt>();
-            while (!isAtEnd()) {
-                statements.add(Statement());
-            }
-            consume(EOF, "Expect end of file.");
-            return statements;
-        } catch (ParseError error) {
-            return null;
+        List <Stmt> statements = new ArrayList<Stmt>();
+        while (!isAtEnd()) {
+            statements.add(Statement());
         }
+
+        return statements;
     }
 
     Stmt Statement() {
