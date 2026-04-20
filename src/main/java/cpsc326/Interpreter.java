@@ -2,7 +2,7 @@ package cpsc326;
 
 import java.util.List;
 
-class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
+class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     Environment environment = new Environment();
     
     void interpret(List<Stmt> statements) {
@@ -76,6 +76,13 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         Object value = null;
         if (stmt.initializer != null) value = evaluate(stmt.initializer);
         environment.define(stmt.name.lexeme, value);
+        
+        return null;
+    }
+
+    @Override
+    public Void visitBlockStmt(Stmt.Block stmt) {
+        executeBlock(stmt.statements, new Environment(environment));
         
         return null;
     }
