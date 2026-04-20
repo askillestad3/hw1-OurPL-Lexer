@@ -48,29 +48,51 @@ class Parser {
     }
 
     Stmt statement() {
-        if (match(PRINT)) {
-            return PrintStatement();
-        } else {
-            return ExpressionStatement();
-        }
+        if (match(FOR)) return forStatement();
+        if (match(IF)) return ifStatement();
+        if (match(PRINT)) return printStatement();
+        if (match(WHILE)) return whileStatement();
+        if (match(LEFT_BRACE)) return new Stmt.Block(block());
+        return expressionStatement();
     }
 
-    Stmt PrintStatement() {
+    Stmt printStatement() {
         Expr expr = expression();
-        if (match(SEMICOLON)) {
-            return new Stmt.Print(expr);
-        }
-        error(peek(), "Expected expression");
-        return null;
+        consume(SEMICOLON, "Expect ';' after value.");
+
+        return new Stmt.Print(expr);
     }
 
-    Stmt ExpressionStatement() {
+    Stmt expressionStatement() {
         Expr expr = expression();
-        if (match(SEMICOLON)) {
-            return new Stmt.Expression(expr);
+        consume(SEMICOLON, "Expect ';' after expression.");
+
+        return new Stmt.Expression(expr);
+    }
+
+    Stmt ifStatement() {
+        consume(LEFT_PAREN, "Expect '(' after 'if'.");
+        Expr condition = expression();
+
+        consume(RIGHT_PAREN, "Expect ')' after if condition.");
+        Stmt thenBranch = statement();
+        Stmt elseBranch = null;
+
+        if (match(ELSE)) {
+            elseBranch = statement();
         }
-        error(peek(), "Expected expression");
-        return null;
+
+        return new Stmt.If(condition, thenBranch, elseBranch);
+    }
+
+    Stmt whileStatement() {
+        consume(LEFT_PAREN, "Expect '(' after 'while'.");
+        Expr condition = expression();
+
+        consume(RIGHT_PAREN, "Expect ')' after condition.");
+        Stmt body = statement();
+
+        return new Stmt.While(condition, body);
     }
 
     private Expr expression() {
