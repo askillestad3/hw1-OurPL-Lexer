@@ -10,6 +10,10 @@ import java.util.List;
 
 public class OurPL {
     
+    static Interpreter interpreter = new Interpreter();
+    static boolean hadError = false;
+    static boolean hadRuntimeError = false;
+
     public static void main(String[] args) throws IOException {
         if (args.length > 1) {
             System.out.println("Usage: OurPl [script]");
@@ -27,9 +31,8 @@ public class OurPL {
         run(new String(bytes, Charset.defaultCharset()));
 
         if (hadError) System.exit(65);
+        if (hadRuntimeError) System.exit(70);
     }
-
-    static boolean hadError = false;
 
     public static void runPrompt() throws IOException {
         InputStreamReader input = new InputStreamReader(System.in);
@@ -51,11 +54,11 @@ public class OurPL {
         List<Token> tokens = lexer.scanTokens();
 
         Parser parser = new Parser(tokens);
-        Expr expression = parser.parse();
+        List<Stmt> statements = parser.parse();
 
         if (hadError) return;
 
-        new Interpreter().interpret(expression);
+        new Interpreter().interpret(statements);
     }
 
     static void error(int line, String message) {
@@ -72,7 +75,7 @@ public class OurPL {
 
     static void runtimeError(RuntimeError error) {
         System.err.println(error.getMessage() + "\n[line " + error.token.line + "]");
-        hadError = true;
+        hadRuntimeError = true;
     }
 
     private static void report(int line, String where, String message) {
