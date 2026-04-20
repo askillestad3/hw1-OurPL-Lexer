@@ -99,6 +99,54 @@ class Parser {
         return equality();
     }
 
+    Stmt forStatement() {
+        consume(LEFT_PAREN, "Expect '(' after 'for'.");
+
+        Stmt initializer;
+        if (match(SEMICOLON)) {
+            initializer = null;
+        } else if (match(VAR)) {
+            initializer = varDeclaration();
+        } else {
+            initializer = expressionStatement();
+        }
+
+        Expr condition = null;
+        if (!check(SEMICOLON)) {
+            condition = expression();
+        }
+        consume(SEMICOLON, "Expect ';' after loop condition.");
+
+        Expr increment = null;
+        if (!check(RIGHT_PAREN)) {
+            increment = expression();
+        }
+        consume(RIGHT_PAREN, "Expect ')' after for clauses.");
+
+        Stmt body = statement();
+
+        if (increment != null) {
+            List<Stmt> forBody = new ArrayList<>();
+            forBody.add(body);
+            forBody.add(new Stmt.Expression(increment));
+            body = new Stmt.Block(forBody);
+        }
+
+        if (condition == null) {
+            condition = new Expr.Literal(true);
+        }
+        body = new Stmt.While(condition, body);
+
+        if (initializer != null) {
+            List <Stmt> outerBody = new ArrayList<>();
+            outerBody.add(initializer);
+            outerBody.add(body);
+            body = new Stmt.Block(outerBody);
+        }
+
+        return body;
+    }
+
     private Expr equality() {
         Expr expr = comparison();
 
