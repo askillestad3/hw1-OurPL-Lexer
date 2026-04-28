@@ -18,7 +18,7 @@ abstract class Stmt {
 
         R visitFunctionStmt(Function stmt);
 
-        R visitReturnStmt(Return stmt);
+        R visitReturnStmt(ReturnStmt stmt);
     }
     static class Print extends Stmt {
         Expr expression;
