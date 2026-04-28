@@ -238,4 +238,18 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         }
         return function.call(this, arguments);
     }
+
+    @Override
+    public Void visitFunctionStmt(Stmt.Function stmt) {
+        OurPLFunction function = new OurPLFunction(stmt);
+        environment.define(stmt.name.lexeme, function);
+        return null;
+    }
+
+    @Override
+    public Void visitReturnStmt(Stmt.ReturnStmt stmt) {
+        Object value = null;
+        if (stmt.value != null) value = evaluate(stmt.value);
+        throw new Return(value);
+    }
 }
